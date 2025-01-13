@@ -64,11 +64,12 @@ class TasksController extends Controller
             'status' => $request->input('status'),
             'content' => $request->input('content'), 
         ]);
-        
-     
-        
+
         // 前のURLへリダイレクトさせる
         return back(); 
+        
+        
+        
     }
 
     /**
@@ -79,6 +80,12 @@ class TasksController extends Controller
     {
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
+        
+        if (\Auth::id() !== $task->user_id) {
+            
+        // トップページへリダイレクトさせる
+        return redirect('/');
+        }
 
         // メッセージ詳細ビューでそれを表示
         return view('tasks.show', [
@@ -94,6 +101,12 @@ class TasksController extends Controller
     {
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
+        
+        if (\Auth::id() !== $task->user_id) {
+            
+        // トップページへリダイレクトさせる
+        return redirect('/');
+        }
 
         // メッセージ編集ビューでそれを表示
         return view('tasks.edit', [
@@ -112,6 +125,13 @@ class TasksController extends Controller
             'status' => 'required|max:10',
             'content' => 'required|max:255',
         ]);
+        
+        if (\Auth::id() !== $task->user_id) {
+            
+        // トップページへリダイレクトさせる
+        return redirect('/');
+        }
+        
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
@@ -132,7 +152,6 @@ class TasksController extends Controller
         // idの値でメッセージを検索して取得
         if (\Auth::id() === $task->user_id) {
             $task->delete();
-       
 
         // トップページへリダイレクトさせる
         return redirect('/');
