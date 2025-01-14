@@ -66,7 +66,7 @@ class TasksController extends Controller
         ]);
 
         // 前のURLへリダイレクトさせる
-        return back(); 
+        return redirect('/');
         
         
         
@@ -126,21 +126,18 @@ class TasksController extends Controller
             'content' => 'required|max:255',
         ]);
         
-        if (\Auth::id() !== $task->user_id) {
-            
-        // トップページへリダイレクトさせる
-        return redirect('/');
-        }
-        
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
         $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
-
+        return redirect('/');
+        
+        if (\Auth::id() !== $task->user_id) {
         // トップページへリダイレクトさせる
         return redirect('/');
+        }
     }
 
     /**
@@ -149,12 +146,13 @@ class TasksController extends Controller
     // deleteでmessages/idにアクセスされた場合の「削除処理」
     public function destroy($id)
     {
+        $task = Task::findOrFail($id);
         // idの値でメッセージを検索して取得
         if (\Auth::id() === $task->user_id) {
             $task->delete();
 
         // トップページへリダイレクトさせる
         return redirect('/');
-    }
+        }
     }
 }
